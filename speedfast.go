@@ -14,7 +14,7 @@ type Measurement struct {
 }
 
 func (measurement Measurement) String() string {
-	return fmt.Sprintf("Source: %v, Download speed: %v, Upload speed: %v", measurement.Source, measurement.Download, measurement.Upload)
+	return fmt.Sprintf("Source: %v, Download speed: %f Mbps, Upload speed: %f Mbps", measurement.Source, measurement.Download, measurement.Upload)
 }
 
 // MeasureWithSpeedtest measures network speed using speedtest.com's api
