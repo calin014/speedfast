@@ -9,12 +9,12 @@ import (
 
 // Measurement contains the result of network speed measurement
 type Measurement struct {
-	source           string
-	download, upload float64
+	Source           string
+	Download, Upload float64
 }
 
 func (measurement Measurement) String() string {
-	return fmt.Sprintf("Source: %v, Download speed: %v, Upload speed: %v", measurement.source, measurement.download, measurement.upload)
+	return fmt.Sprintf("Source: %v, Download speed: %v, Upload speed: %v", measurement.Source, measurement.Download, measurement.Upload)
 }
 
 // MeasureWithSpeedtest measures network speed using speedtest.com's api
