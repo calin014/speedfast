@@ -7,12 +7,20 @@ import (
 	"github.com/calin014/speedfast"
 )
 
-func TestMeasureWithSpeedtest(t *testing.T) {
-	result, err := speedfast.MeasureWithSpeedtest()
+func TestAllMeasurers(t *testing.T) {
 
-	if err != nil {
-		t.Fatal("Got an error!")
+	measurers := []speedfast.Measurer{
+		speedfast.MeasurerFunc(speedfast.MeasureWithSpeedtest),
+		speedfast.MeasurerFunc(speedfast.MeasureWithFastInHeadlessBrowser),
 	}
 
-	fmt.Println(result)
+	for _, m := range measurers {
+		result, err := m.Measure()
+
+		if err != nil {
+			t.Fatal("Got an error!")
+		}
+
+		fmt.Println(result)
+	}
 }
