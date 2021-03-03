@@ -2,7 +2,6 @@ package speedfast
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -10,7 +9,7 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-// MeasureWithFastInHeadlessBrowser measures network speed by opening fast.com in a headless browser and scraping the page
+// MeasureWithFastInHeadlessBrowser measures network speed by opening fast.com in a headless chrome browser and scraping the page
 func MeasureWithFastInHeadlessBrowser() (Measurement, error) {
 	// create chrome instance
 	ctx, cancel := chromedp.NewContext(
@@ -23,8 +22,8 @@ func MeasureWithFastInHeadlessBrowser() (Measurement, error) {
 	ctx, cancel = context.WithTimeout(ctx, 50*time.Second)
 	defer cancel()
 
-	// navigate to a page, wait for an element, click
 	var download, upload string
+
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(`https://fast.com`),
 		chromedp.WaitVisible(`#show-more-details-link`),
@@ -34,7 +33,6 @@ func MeasureWithFastInHeadlessBrowser() (Measurement, error) {
 		chromedp.Text(`#upload-value`, &upload),
 	)
 
-	fmt.Println(err)
 	if err != nil {
 		return Measurement{}, err
 	}

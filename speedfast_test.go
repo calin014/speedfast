@@ -11,6 +11,7 @@ func TestAllMeasurers(t *testing.T) {
 
 	measurers := []speedfast.Measurer{
 		speedfast.MeasurerFunc(speedfast.MeasureWithSpeedtest),
+		speedfast.MeasurerFunc(speedfast.MeasureWithFast),
 		speedfast.MeasurerFunc(speedfast.MeasureWithFastInHeadlessBrowser),
 	}
 

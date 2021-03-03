@@ -21,5 +21,18 @@ import (
 func main() {
 	fmt.Println(speedfast.MeasureWithSpeedtest())
 	fmt.Println(speedfast.MeasureWithFast())
+	fmt.Println(speedfast.MeasureWithFastInHeadlessBrowser())
+
+	// ...or use the Measurer interface
+	measurers := []speedfast.Measurer{
+		speedfast.MeasurerFunc(speedfast.MeasureWithSpeedtest),
+		speedfast.MeasurerFunc(speedfast.MeasureWithFast),
+		speedfast.MeasurerFunc(speedfast.MeasureWithFastInHeadlessBrowser),
+	}
+
+	for _, m := range measurers {
+		result, err := m.Measure()
+		fmt.Println(result)
+	}
 }
 ```
