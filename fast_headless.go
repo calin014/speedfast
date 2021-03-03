@@ -49,5 +49,5 @@ func MeasureWithFastInHeadlessBrowser() (Measurement, error) {
 		return Measurement{}, err
 	}
 
-	return Measurement{"fast.com", downloadf, uploadf}, nil
+	return Measurement{"fast.com headless", downloadf, uploadf}, nil
 }
