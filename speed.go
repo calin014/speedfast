@@ -31,5 +31,5 @@ func MeasureWithSpeedtest() (Measurement, error) {
 		return Measurement{}, err
 	}
 
-	return Measurement{"speedtest.com", testServer.DLSpeed, testServer.ULSpeed}, nil
+	return Measurement{"speedtest.net", testServer.DLSpeed, testServer.ULSpeed}, nil
 }

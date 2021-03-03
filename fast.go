@@ -1,55 +1,82 @@
 package speedfast
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"strconv"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
 	"time"
 
-	"github.com/chromedp/chromedp"
+	"github.com/gesquive/fast-cli/fast"
+	"golang.org/x/sync/errgroup"
 )
 
-// MeasureWithFastInHeadlessBrowser measures network speed by opening fast.com in a headless browser and scraping the page
-func MeasureWithFastInHeadlessBrowser() (Measurement, error) {
-	// create chrome instance
-	ctx, cancel := chromedp.NewContext(
-		context.Background(),
-		chromedp.WithLogf(log.Printf),
-	)
-	defer cancel()
+// MeasureWithFast naively attempts to measure network speed by using fast.com's api directly
+// because fast-cli and go-fast libraries provide only download speed
+func MeasureWithFast() (Measurement, error) {
+	url := fast.GetDlUrls(1)[0]
 
-	// create a timeout
-	ctx, cancel = context.WithTimeout(ctx, 50*time.Second)
-	defer cancel()
-
-	// navigate to a page, wait for an element, click
-	var download, upload string
-	err := chromedp.Run(ctx,
-		chromedp.Navigate(`https://fast.com`),
-		chromedp.WaitVisible(`#show-more-details-link`),
-		chromedp.Click(`#show-more-details-link`, chromedp.NodeVisible),
-		chromedp.WaitVisible(`#upload-value.succeeded`),
-		chromedp.Text(`#speed-value`, &download),
-		chromedp.Text(`#upload-value`, &upload),
-	)
-
-	fmt.Println(err)
-	if err != nil {
-		return Measurement{}, err
-	}
-
-	downloadf, err := strconv.ParseFloat(download, 64)
+	downloadSpeed, err := measureNetworkSpeed(download, url)
+	uploadSpeed, err := measureNetworkSpeed(upload, url)
 
 	if err != nil {
 		return Measurement{}, err
 	}
 
-	uploadf, err := strconv.ParseFloat(upload, 64)
+	return Measurement{"fast.com", downloadSpeed, uploadSpeed}, nil
+}
 
-	if err != nil {
-		return Measurement{}, err
+var client = http.Client{}
+
+const (
+	workload      = 8
+	payloadSizeMB = 25.0 // download payload is by debault 25MB, make upload 25MB also
+)
+
+func measureNetworkSpeed(operation func(url string) error, url string) (float64, error) {
+	eg := errgroup.Group{}
+
+	sTime := time.Now()
+	for i := 0; i < workload; i++ {
+		eg.Go(func() error {
+			return operation(url)
+		})
 	}
+	if err := eg.Wait(); err != nil {
+		return 0, err
+	}
+	fTime := time.Now()
 
-	return Measurement{"fast.com", downloadf, uploadf}, nil
+	return payloadSizeMB * 8 * float64(workload) / fTime.Sub(sTime).Seconds(), nil
+}
+
+func measureUploadSpeed(url string) float64 {
+	return 0
+}
+
+func download(url string) error {
+	resp, err := client.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	ioutil.ReadAll(resp.Body)
+
+	return nil
+}
+
+func upload(uri string) error {
+	v := url.Values{}
+
+	//10b * x MB / 10 = x MB
+	v.Add("content", strings.Repeat("0123456789", payloadSizeMB*1024*1024/10))
+
+	resp, err := client.PostForm(uri, v)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	ioutil.ReadAll(resp.Body)
+
+	return nil
 }
