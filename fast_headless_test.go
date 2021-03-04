@@ -15,3 +15,9 @@ func TestFastHeadlessMeasurement(t *testing.T) {
 
 	t.Log(result)
 }
+
+func BenchmarkFastHeadlessMeasurement(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		speedfast.MeasureWithFastInHeadlessBrowser()
+	}
+}

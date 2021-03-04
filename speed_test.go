@@ -6,8 +6,8 @@ import (
 	"github.com/calin014/speedfast"
 )
 
-func TestFastMeasurement(t *testing.T) {
-	result, err := speedfast.MeasureWithFast()
+func TestSpeedtestMeasurement(t *testing.T) {
+	result, err := speedfast.MeasureWithSpeedtest()
 
 	if err != nil {
 		t.Fatal("Got an error:", err)
@@ -16,8 +16,8 @@ func TestFastMeasurement(t *testing.T) {
 	t.Log(result)
 }
 
-func BenchmarkFastMeasurement(b *testing.B) {
+func BenchmarkSpeedtestMeasurement(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		speedfast.MeasureWithFast()
+		speedfast.MeasureWithSpeedtest()
 	}
 }

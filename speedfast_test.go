@@ -1,7 +1,6 @@
 package speedfast_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/calin014/speedfast"
@@ -22,6 +21,20 @@ func TestAllMeasurers(t *testing.T) {
 			t.Fatal("Got an error!")
 		}
 
-		fmt.Println(result)
+		t.Log(result)
+	}
+}
+
+func TestCustomMeasurer(t *testing.T) {
+	someMeasurement := speedfast.Measurement{}
+
+	measurer := func() (speedfast.Measurement, error) {
+		return someMeasurement, nil
+	}
+
+	result, _ := speedfast.MeasurerFunc(measurer).Measure()
+
+	if someMeasurement != result {
+		t.Fatal("Result should be: ", someMeasurement, " but got: ", result)
 	}
 }

@@ -47,11 +47,11 @@ func measureNetworkSpeed(operation func(url string) error, url string) (float64,
 	}
 	fTime := time.Now()
 
-	return payloadSizeMB * 8 * float64(workload) / fTime.Sub(sTime).Seconds(), nil
+	return calculateSpeed(sTime, fTime), nil
 }
 
-func measureUploadSpeed(url string) float64 {
-	return 0
+func calculateSpeed(sTime time.Time, fTime time.Time) float64 {
+	return payloadSizeMB * 8 * float64(workload) / fTime.Sub(sTime).Seconds()
 }
 
 func download(url string) error {
@@ -69,7 +69,7 @@ func upload(uri string) error {
 	v := url.Values{}
 
 	//10b * x MB / 10 = x MB
-	v.Add("content", strings.Repeat("0123456789", payloadSizeMB*1024*1024/10))
+	v.Add("content", createUploadPayload())
 
 	resp, err := client.PostForm(uri, v)
 	if err != nil {
@@ -79,4 +79,8 @@ func upload(uri string) error {
 	ioutil.ReadAll(resp.Body)
 
 	return nil
+}
+
+func createUploadPayload() string {
+	return strings.Repeat("0123456789", payloadSizeMB*1024*1024/10)
 }

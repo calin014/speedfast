@@ -8,6 +8,8 @@ import (
 
 // MeasureWithSpeedtest measures network speed using speedtest.com's api
 func MeasureWithSpeedtest() (Measurement, error) {
+	//TODO: coverage is 66%, could abstract external lib by using an interface
+	//and mock it in tests to cover the error branches, but it complicates code too much
 	user, _ := speedtest.FetchUserInfo()
 
 	serverList, err := speedtest.FetchServerList(user)
@@ -16,7 +18,7 @@ func MeasureWithSpeedtest() (Measurement, error) {
 		return Measurement{}, err
 	}
 
-	if len(serverList.Servers) <= 0 {
+	if len(serverList.Servers) == 0 {
 		return Measurement{}, errors.New("no servers available")
 	}
 
