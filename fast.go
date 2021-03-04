@@ -1,6 +1,7 @@
 package speedfast
 
 import (
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -14,7 +15,13 @@ import (
 // MeasureWithFast naively attempts to measure network speed by using fast.com's api directly
 // because fast-cli and go-fast libraries provide only download speed
 func MeasureWithFast() (Measurement, error) {
-	url := fast.GetDlUrls(1)[0]
+	urls := fast.GetDlUrls(1)
+
+	if len(urls) == 0 {
+		return Measurement{}, errors.New("no server urls available")
+	}
+
+	url := urls[0]
 
 	downloadSpeed, err := measureNetworkSpeed(download, url)
 	uploadSpeed, err := measureNetworkSpeed(upload, url)
