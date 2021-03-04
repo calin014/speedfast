@@ -1,6 +1,11 @@
 # speedfast
 Small GO library that tests the download and upload speeds by using Ookla's https://www.speedtest.net/ and Netflix's https://fast.com/
 
+Used libs: 
+* Delegates to [showwin/speedtest-go](https://github.com/showwin/speedtest-go) for **speedtest.net**
+* Inspired by [gesquive/fast-cli](https://github.com/gesquive/fast-cli) (reuses a small part of the exposed api) and [npotts/go-fast](https://github.com/npotts/go-fast) for **fast.com**
+* Uses [chromedp/chromedp](https://github.com/chromedp/chromedp) for the **web scrape version of fast.com** 
+
 ## Dependency
 
 ```
@@ -8,7 +13,7 @@ go get github.com/calin014/speedfast
 ```
 
 ### API Usage
-The code below finds closest available speedtest server and tests the latency, download, and upload speeds.
+
 ```go
 package main
 
@@ -31,8 +36,7 @@ func main() {
 	}
 
 	for _, m := range measurers {
-		result, err := m.Measure()
-		fmt.Println(result)
+		fmt.Println(m.Measure())
 	}
 }
 ```

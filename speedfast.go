@@ -14,6 +14,8 @@ func (measurement Measurement) String() string {
 	return fmt.Sprintf("Source: %v, Download speed: %f Mbps, Upload speed: %f Mbps", measurement.Source, measurement.Download, measurement.Upload)
 }
 
+// Not sure if by "1 exposed API" was ment 1 exposed function that takes a discriminator parameter, but I chose to expose one function per measurement type
+
 // Measurer is the common interface for all the measurement functions
 type Measurer interface {
 	Measure() (Measurement, error)
